@@ -1,0 +1,15 @@
+<!-- 
+This file is part of the everest project. 
+See LICENSE.txt for licensing, CONTRIBUTORS.txt for contributor information.
+-->
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:meta="http://namespaces.zope.org/meta"
+>
+    <meta:directives namespace="http://pylonshq.com/pyramid">
+        <meta:directive
+            name="nosql_repository"
+            schema="everest_nosql.directives.INoSqlRepositoryDirective"
+            handler="everest_nosql.directives.nosql_repository" />
+    </meta:directives>
+</configure>

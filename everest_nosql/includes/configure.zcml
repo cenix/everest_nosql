@@ -1,0 +1,8 @@
+<!-- 
+This file is part of the everest project. 
+See LICENSE.txt for licensing, CONTRIBUTORS.txt for contributor information.
+-->
+<configure xmlns="http://pylonshq.com/pyramid">
+    <include package="everest.includes" />
+    <include file="meta.zcml" />
+</configure>

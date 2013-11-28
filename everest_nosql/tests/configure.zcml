@@ -1,0 +1,19 @@
+<configure xmlns="http://pylonshq.com/pyramid">
+
+    <!-- Include special directives. -->
+
+    <include package="everest_nosql.includes" />
+
+    <!-- Utilities -->
+
+    <!-- Repositories. -->
+
+    <nosql_repository make_default="true" />
+
+    <!-- Resources. -->
+
+    <include
+        package="everest.tests.complete_app"
+        file="resources.zcml" />
+
+</configure>
