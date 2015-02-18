@@ -4,12 +4,16 @@ See LICENSE.txt for licensing, CONTRIBUTORS.txt for contributor information.
 
 Created on Nov 27, 2013.
 """
-from everest.tests.test_url import UrlTestCaseBase
-from everest_nosql.testing import NoSqlTestCaseMixin
+import pytest
+
+from everest.tests.test_url import BaseTestUrl
+
 
 __docformat__ = 'reStructuredText en'
-__all__ = ['RepoUrlTestCaseNoSql',
+__all__ = ['TestUrlNoSql',
            ]
 
-class RepoUrlTestCaseNoSql(NoSqlTestCaseMixin, UrlTestCaseBase):
+
+@pytest.mark.usefixtures('nosql')
+class TestUrlNoSql(BaseTestUrl):
     config_file_name = 'everest_nosql.tests:configure.zcml'

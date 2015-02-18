@@ -4,47 +4,50 @@ See LICENSE.txt for licensing, CONTRIBUTORS.txt for contributor information.
 
 Created on Nov 27, 2013.
 """
+from everest_nosql.aggregate import NoSqlAggregate
+
+import pytest
+
 from everest.querying.specifications import desc
 from everest.querying.specifications import eq
 from everest.querying.specifications import gt
-from everest.tests.complete_app.testing import create_entity
-from everest.tests.test_aggregates import RootAggregateTestCaseBase
-from everest_nosql.aggregate import NoSqlAggregate
-from everest_nosql.testing import NoSqlTestCaseMixin
+from everest.tests.complete_app.interfaces import IMyEntity
+from everest.tests.test_aggregates import BaseTestRootAggregate
+
 
 __docformat__ = 'reStructuredText en'
-__all__ = ['NosSqlRootAggregateTestCase',
+__all__ = ['TestNosSqlRootAggregate',
            ]
 
 
-class NosSqlRootAggregateTestCase(NoSqlTestCaseMixin,
-                                  RootAggregateTestCaseBase):
+class Fixtures(object):
+    ent0 = lambda entity_tree_fac: entity_tree_fac(id=0, text='222')
+    ent1 = lambda entity_tree_fac: entity_tree_fac(id=1, text='111')
+    ent2 = lambda entity_tree_fac: entity_tree_fac(id=2, text='000')
+
+
+@pytest.mark.usefixtures('nosql')
+class TestNosSqlRootAggregate(BaseTestRootAggregate):
     config_file_name = 'everest_nosql.tests:configure.zcml'
     agg_class = NoSqlAggregate
 
-    def test_nested_attribute(self):
-        agg = self._aggregate
-        ent0 = create_entity(entity_id=0)
-        ent0.parent.text_ent = '222'
-        ent1 = create_entity(entity_id=1)
-        ent1.parent.text_ent = '111'
-        ent2 = create_entity(entity_id=2)
-        ent2.parent.text_ent = '000'
+    def test_nested_attribute(self, class_entity_repo, ent0, ent1, ent2):
+        agg = class_entity_repo.get_aggregate(IMyEntity)
         agg.add(ent0)
         agg.add(ent1)
         agg.add(ent2)
-        self.assert_equal(len(list(agg.iterator())), 3)
+        assert len(list(agg.iterator())) == 3
         agg.filter = eq(**{'parent.text_ent':'222'})
-        self.assert_equal(len(list(agg.iterator())), 1)
+        assert len(list(agg.iterator())) == 1
         agg.filter = None
-        self.assert_equal(len(list(agg.iterator())), 3)
+        assert len(list(agg.iterator())) == 3
         # TODO: Nested attribute ordering does not work with NoSQL.
         agg.order = desc('id')
-        self.assert_true(next(agg.iterator()) is ent2)
+        assert next(agg.iterator()) is ent2
         # With nested filter and order.
         agg.filter = gt(**{'parent.text_ent':'000'})
-        self.assert_true(next(agg.iterator()) is ent1)
+        assert next(agg.iterator()) is ent1
         # With nested filter, order, and slice.
         agg.slice = slice(1, 2)
-        self.assert_true(next(agg.iterator()) is ent0)
+        assert next(agg.iterator()) is ent0
 

@@ -8,23 +8,18 @@ Created on Nov 26, 2013.
 """
 from everest_nosql.utils import MongoClassRegistry
 
+import pytest
+
+
 __docformat__ = 'reStructuredText en'
-__all__ = ['NoSqlTestCaseMixin',
-           ]
+__all__ = []
 
 
-class NoSqlTestCaseMixin(object):
+@pytest.fixture(scope='class')
+def nosql(request):
     """
-    Mixin for test cases using the NoSQL backend.
-
-    Ensures that all classes instrumented to work with Mongo DB are
-    unregistered on class teardown.
+    Fixture for all tests that use the NoSQL backend.
     """
-    @classmethod
-    def teardown_class(cls):
+    def tear_down():
         MongoClassRegistry.unregister_all()
-        base_cls = super(NoSqlTestCaseMixin, cls)
-        try:
-            base_cls.teardown_class()
-        except AttributeError:
-            pass
+    request.addfinalizer(tear_down)
